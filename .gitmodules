@@ -1,0 +1,6 @@
+[submodule "pkg_developed"]
+	path = pkg_developed
+	url = https://github.com/AntonioConsiglio/pkg_developed
+[submodule "esp_microros_wifi_firmware"]
+	path = esp_microros_wifi_firmware
+	url = https://github.com/AntonioConsiglio/esp_microros_wifi_firmware
