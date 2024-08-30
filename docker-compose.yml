@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  micro_ros_agent:
+    image: microros/micro-ros-agent:humble
+    command: udp4 --port 8888 -v6
+    network_mode: host
+    stdin_open: true
+    tty: true
+    restart: always
+    environment:
+      - TZ=Europe/Rome
+
+  ros2_rover:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rover_humble
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - XAUTHORITY=/tmp/.docker.xauth
+      - ROS_VERSION=2
+      - ROS_DISTRO=humble
+      - ROS_PYTHON_VERSION=3
+      - ROS_DOMAIN_ID=0
+      - ROS_LOCALHOST_ONLY=0
+      - TZ=Europe/Rome
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth
+      - /dev:/dev
+      - ./pkg_developed:/pkg_developed
+    network_mode: host
+    privileged: true
+    stdin_open: true
+    tty: true
+    restart: always
+    command: ./start_ros_service.sh
+    #command: ros2 launch rover_start start_service.launch.py
