@@ -36,5 +36,5 @@ services:
     stdin_open: true
     tty: true
     restart: always
-    command: ./start_ros_service.sh
+    command: bash -c "chmod +x /pkg_developed/start_ros_service.sh && /pkg_developed/start_ros_service.sh"
     #command: ros2 launch rover_start start_service.launch.py

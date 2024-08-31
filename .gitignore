@@ -1,1 +1,3 @@
 exec_container.sh
+launch_microros_agent.sh
+v2start_ros2_contanier.sh

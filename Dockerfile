@@ -34,8 +34,39 @@ COPY scripts/*.sh /ros2_project/
 
 RUN chmod +x ./*.sh
 
-RUN ./install_ros2.sh
+RUN apt-get install libserial-dev xterm -y
+
+#Installing ROS Humble base package and development tools
+RUN apt-get update -y
+RUN apt-get install ros-humble-ros-base -y
+RUN apt install ros-dev-tools -y
+
+#Sourcing ROS Humble setup script and 
+RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+RUN echo 'source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash' >> ~/.bashrc
+
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash"
+
+#Install ROS Humble utils packages 
+RUN apt install ros-humble-rviz2 -y
+RUN apt install ros-humble-xacro -y
+RUN apt install ros-humble-ros2-control -y
+RUN apt install ros-humble-joint-state-publisher-gui -y
+RUN apt install ros-humble-tf2-ros -y
+RUN apt install ros-humble-twist-mux -y
+
+#Install ROS Humble controllers packages 
+RUN apt-get install ros-humble-ros2-controllers -y
+RUN apt install ros-humble-teleop-twist-keyboard -y
+RUN apt install ros-humble-teleop-twist-joy -y
+RUN apt install ros-humble-joy -y
+
+#Install ROS Humble Navigation packages 
+RUN apt install ros-humble-navigation2 ros-humble-nav2-bringup -y
+
+# Install depthai ros dependencies and pkgs
+RUN apt install ros-humble-depthai-ros -y
+
 RUN bash
-RUN apt install ros-humble-teleop-twist-joy
 # RUN ./install_microros_esp32.sh
 
