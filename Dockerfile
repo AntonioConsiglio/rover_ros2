@@ -67,6 +67,9 @@ RUN apt install ros-humble-navigation2 ros-humble-nav2-bringup -y
 # Install depthai ros dependencies and pkgs
 RUN apt install ros-humble-depthai-ros -y
 
+RUN apt install python3-pip -y
+RUN pip3 install smbus
+
 RUN bash
 # RUN ./install_microros_esp32.sh
 
