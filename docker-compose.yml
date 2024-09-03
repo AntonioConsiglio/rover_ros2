@@ -10,6 +10,17 @@ services:
     restart: always
     environment:
       - TZ=Europe/Rome
+  
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: webAPI/Dockerfile
+    container_name: fastapi_container
+    ports:
+      - "8000:8000"
+    restart: always
+    depends_on: 
+      - micro_ros_agent
 
   ros2_rover:
     build:
