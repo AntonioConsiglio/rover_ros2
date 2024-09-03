@@ -34,7 +34,7 @@ COPY scripts/*.sh /ros2_project/
 
 RUN chmod +x ./*.sh
 
-RUN apt-get install libserial-dev xterm -y
+RUN apt-get install libserial-dev xterm libi2c-dev -y
 
 #Installing ROS Humble base package and development tools
 RUN apt-get update -y
@@ -60,6 +60,9 @@ RUN apt-get install ros-humble-ros2-controllers -y
 RUN apt install ros-humble-teleop-twist-keyboard -y
 RUN apt install ros-humble-teleop-twist-joy -y
 RUN apt install ros-humble-joy -y
+
+#Install ROS Humble robot localization package 
+RUN apt install ros-humble-robot-localization -y
 
 #Install ROS Humble Navigation packages 
 RUN apt install ros-humble-navigation2 ros-humble-nav2-bringup -y
