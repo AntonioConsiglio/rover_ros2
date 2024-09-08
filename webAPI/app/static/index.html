@@ -32,6 +32,9 @@
         .start {
             background-color: #4caf50;
         }
+        .connections {
+            background-color: #2196f3;
+        }
     </style>
 </head>
 <body>
@@ -39,6 +42,8 @@
         <h1>Control Panel</h1>
         <button class="start" onclick="sendRequest('start')">START</button>
         <button class="restart" onclick="sendRequest('restart')">RESTART</button>
+        <button class="connections" onclick="getConnections()">GET CONNECTIONS</button>
+        <p id="connection-count">Connections: 0</p>
     </div>
 
     <script>
@@ -56,6 +61,24 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred');
+            });
+        }
+
+        function getConnections() {
+            fetch(`http://localhost:8000/connections`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const connectionCount = document.getElementById("connection-count");
+                connectionCount.textContent = `Connections: ${data.count}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching connections');
             });
         }
     </script>

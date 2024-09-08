@@ -3,7 +3,7 @@ version: '3.8'
 services:
   micro_ros_agent:
     image: microros/micro-ros-agent:humble
-    command: udp4 --port 8888 -v6
+    command: udp4 --port 8888 -v5
     network_mode: host
     stdin_open: true
     tty: true
@@ -19,6 +19,9 @@ services:
     ports:
       - "8000:8000"
     restart: always
+    volumes:
+      - ./webAPI/app:/app
+    command: bash -c "uvicorn api:app --host 0.0.0.0 --port 8000"
     depends_on: 
       - micro_ros_agent
 
@@ -47,6 +50,6 @@ services:
     stdin_open: true
     tty: true
     restart: always
-    #command: bash -c "chmod +x /pkg_developed/start_ros_service.sh && /pkg_developed/start_ros_service.sh"
-    command: bash
+    command: bash -c "chmod +x /pkg_developed/start_ros_service.sh && /pkg_developed/start_ros_service.sh"
+    #command: bash
     #command: ros2 launch rover_start start_service.launch.py
