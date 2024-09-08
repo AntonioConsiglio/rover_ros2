@@ -60,6 +60,7 @@ RUN apt-get install ros-humble-ros2-controllers -y
 RUN apt install ros-humble-teleop-twist-keyboard -y
 RUN apt install ros-humble-teleop-twist-joy -y
 RUN apt install ros-humble-joy -y
+RUN apt install ros-humble-cv-bridge -y
 
 #Install ROS Humble robot localization package 
 RUN apt install ros-humble-robot-localization -y
