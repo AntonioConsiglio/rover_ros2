@@ -61,6 +61,7 @@ RUN apt install ros-humble-teleop-twist-keyboard -y
 RUN apt install ros-humble-teleop-twist-joy -y
 RUN apt install ros-humble-joy -y
 RUN apt install ros-humble-cv-bridge -y
+RUN apt install ros-humble-ffmpeg-image-transport-msgs -y
 
 #Install ROS Humble robot localization package 
 RUN apt install ros-humble-robot-localization -y
@@ -73,6 +74,17 @@ RUN apt install ros-humble-depthai-ros -y
 
 RUN apt install python3-pip -y
 RUN pip3 install smbus
+
+#Install correct Eigen Dependencies and ORB-SLAM3 with dependencies
+WORKDIR /ros2_project
+# Try to clone the repository
+RUN git clone https://gitlab.com/libeigen/eigen.git
+RUN rm -r /usr/include/eigen3
+RUN cd eigen && git checkout 3.4 && cd ..
+RUN cp -r ./eigen /usr/include/eigen3
+
+#Install ORB-SLAM3 AND IT'S DEPENDENCIES
+
 
 RUN bash
 # RUN ./install_microros_esp32.sh
