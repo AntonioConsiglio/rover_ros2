@@ -7,7 +7,7 @@ WORKDIR /app
 # Install dependencies
 # COPY requirements.txt ./
 # RUN pip install --no-cache-dir -r requirements.txt
-
+RUN pip install docker
 # Copy application files
 COPY ./webAPI/app /app
 

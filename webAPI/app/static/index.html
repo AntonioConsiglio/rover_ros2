@@ -3,19 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Panel</title>
+    <title>Rover Control Panel</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
             background-color: #f4f4f4;
+            min-height: 100vh; /* Changed from height to min-height */
+            display: flex;
+            flex-direction: column; /* Added to stack content vertically */
+            align-items: center; /* Center content horizontally */
+            padding-top: 20px; /* Add some top padding */
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px; /* Or any suitable max-width */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .container {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .log-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
         }
         button {
             font-size: 16px;
@@ -35,20 +54,74 @@
         .connections {
             background-color: #2196f3;
         }
+        .log-window {
+            width: 90%; 
+            max-width: 640px; 
+            border: 1px solid #ddd; 
+            /* padding: 10px;  */
+            height: 300px; 
+            overflow-y: scroll; 
+            background-color: #f8f8f8;
+            margin: 10px;
+        }
+        #image-container{
+            display: flex;
+            justify-content: center;
+        }
+        #received-image{
+            width: 95%;
+            max-width: 640px;
+            height: auto;
+        }
+        #log-output {
+            font-family: monospace;
+            font-size: 12px;
+            color: #333;
+            white-space: pre-wrap; /* Preserves whitespace formatting */
+            word-wrap: break-word; /* Prevents overflow of long words */
+        }
+        @media (max-width: 768px) {
+            .log-container {
+                flex-direction: column;
+            }
+            .log-window {
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Control Panel</h1>
-        <button class="start" onclick="sendRequest('start')">START</button>
-        <button class="restart" onclick="sendRequest('restart')">RESTART</button>
-        <button class="connections" onclick="getConnections()">GET CONNECTIONS</button>
-        <p id="connection-count">Connections: 0</p>
+    <div class="main-container">
+        <div class="container">
+            <h1>Rover Control Panel</h1>
+        </div>
+        <div class="container">
+            <button class="start" onclick="sendRequest('start')">START</button>
+            <button class="restart" onclick="sendRequest('restart')">RESTART</button>
+            <button class="connections" onclick="getConnections('prova')">GET CONNECTIONS</button>
+        </div>
+        <div class="container">
+            <p id="connection-count">Connections: 0</p>
+        </div>
+        <div id="image-container">
+            <img id="received-image" alt="Received Image" style="display: none;">
+        </div>
+        <div class="log-container">
+            <div class="log-window">
+                <pre id="log-rover-output">Logs will appear here...</pre>
+            </div>
+            <div class="log-window">
+                <pre id="log-microros-output">Logs will appear here...</pre>
+            </div>
+        </div>
     </div>
 
     <script>
+
+        let host_url = "localhost:8000";
+        // let host_url = "192.168.4.1:8000"
         function sendRequest(action) {
-            fetch(`http://localhost:8000/${action}`, {
+            fetch(`http://${host_url}/${action}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -64,8 +137,10 @@
             });
         }
 
-        function getConnections() {
-            fetch(`http://localhost:8000/connections`, {
+        function getConnections(test) {
+            console.log("Connection sended!")
+            console.log(test)
+            fetch(`http://${host_url}/connections`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -81,6 +156,69 @@
                 alert('An error occurred while fetching connections');
             });
         }
+        
+        let socket;
+
+        function connectWebSocket() {
+            socket = new WebSocket(`ws://${host_url}/ws`);
+
+            socket.onopen = function(e) {
+                console.log(`WebSocket connection established to ${host_url}`);
+                socket.send('IMAGE');
+            };
+
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'IMAGE') {
+                    displayImage(data.data);
+                }
+            };
+
+            socket.onclose = function(event) {
+                console.log(`WebSocket connection to ${url} closed`);
+                currentUrlIndex++;
+                // setTimeout(connectWebSocket, 1000);
+            };
+
+            socket.onerror = function(error) {
+                console.error(`WebSocket error with ${url}: ${error}`);
+                currentUrlIndex++;
+                // setTimeout(connectWebSocket, 1000);
+            };
+        }
+
+        function displayImage(base64Data) {
+            const img = document.getElementById('received-image');
+            img.src = `data:image/jpeg;base64,${base64Data}`;
+            img.style.display = 'block';
+        }
+        
+
+        function fetchLogs(argument) {
+            fetch(`http://${host_url}/${argument}`)
+            .then(response => response.json())
+            .then(data => {
+                if (argument === 'rover_logs'){
+                    const logOutput = document.getElementById("log-rover-output");
+                    logOutput.textContent = data.logs;
+                }
+                else{
+                    const logOutput = document.getElementById("log-microros-output");
+                    logOutput.textContent = data.logs;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching logs:', error);
+            });
+        }
+
+        // Fetch logs every 100ms
+        setInterval(fetchLogs('rover_logs'), 1000);
+        
+        setInterval(fetchLogs('micro_ros_agent_logs'), 1000);
+        // {console.log("Interval ID setted",id);}
+
+        connectWebSocket();
     </script>
 </body>
 </html>

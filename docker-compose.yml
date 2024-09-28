@@ -16,11 +16,13 @@ services:
       context: .
       dockerfile: webAPI/Dockerfile
     container_name: fastapi_container
+    network_mode: host
     ports:
       - "8000:8000"
     restart: always
     volumes:
       - ./webAPI/app:/app
+      - /var/run/docker.sock:/var/run/docker.sock  # Add this line to get docker container logs
     command: bash -c "uvicorn api:app --host 0.0.0.0 --port 8000"
     depends_on: 
       - micro_ros_agent
@@ -51,5 +53,5 @@ services:
     tty: true
     restart: always
     command: bash -c "chmod +x /pkg_developed/start_ros_service.sh && /pkg_developed/start_ros_service.sh"
-    #command: bash
-    #command: ros2 launch rover_start start_service.launch.py
+  #   # command: bash
+  #   #command: ros2 launch rover_start start_service.launch.py
