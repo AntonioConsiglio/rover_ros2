@@ -83,8 +83,28 @@ RUN rm -r /usr/include/eigen3
 RUN cd eigen && git checkout 3.4 && cd ..
 RUN cp -r ./eigen /usr/include/eigen3
 
-#Install ORB-SLAM3 AND IT'S DEPENDENCIES
+#Install Pangolin library v0.6
+RUN git clone https://github.com/stevenlovegrove/Pangolin Pangolin
+WORKDIR /ros2_project/Pangolin
+RUN yes | ./scripts/install_prerequisites.sh recommended
+RUN git checkout v0.6
+COPY /pkg_developed/colour.h /ros2_project/Pangolin/include/pangolin/gl/
+RUN mkdir build && cd build && cmake .. && make && make install
 
+WORKDIR /ros2_project
+
+#Install ORB_SLAM3
+RUN git clone -b c++14_comp https://github.com/UZ-SLAMLab/ORB_SLAM3.git ORB_SLAM3
+COPY /pkg_developed/orb_slam_build.sh /ros2_project/ORB_SLAM3/
+# copy nan handle file to prevent shopus error with nan values
+COPY /pkg_developed/ImuTypes.cc /ros2_project/ORB_SLAM3/src/
+COPY /pkg_developed/Sim3Solver.cc /ros2_project/ORB_SLAM3/src/
+WORKDIR /ros2_project/ORB_SLAM3
+#Build dependencies and orb-slam3 with custom core number 
+RUN chmod +x ./orb_slam_build.sh && ./orb_slam_build.sh
+RUN echo 'export LD_LIBRARY_PATH=/ros2_project/ORB_SLAM3/lib:/usr/local/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+
+WORKDIR /ros2_project
 
 RUN bash
 # RUN ./install_microros_esp32.sh
