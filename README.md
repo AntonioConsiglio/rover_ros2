@@ -20,8 +20,8 @@ The software leverages ROS2 and micro-ROS, utilizing the Nav2 stack for autonomo
 ### Demo
 
 <div style="display: flex; width: 100%; justify-content:space-evenly">
-  <img src="documents/rover_controller.gif" alt="Alt text">
-  <img src="documents/rover_control_panel.gif" alt="Alt text">
+  <img src="documents/rover_controller.gif" alt="rover controller" style="height:500px;width:auto">
+  <img src="documents/rover_control_panel.gif" alt="rover control panel" style="height:500px;width:auto">
 </div>
 
 
