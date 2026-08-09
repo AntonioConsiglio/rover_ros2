@@ -1,4 +1,6 @@
-## ROS2 Autonomus rover
+
+
+## ROS2 Autonomous rover
 
 This autonomous rover is designed with differential kinematics and is equipped with a Raspberry Pi 5, ESP32 board, and an OAK-D Lite camera.
 
@@ -23,5 +25,3 @@ The software leverages ROS2 and micro-ROS, utilizing the Nav2 stack for autonomo
   <img src="documents/rover_controller.gif" alt="rover controller" style="height:500px;width:auto">
   <img src="documents/rover_control_panel.gif" alt="rover control panel" style="height:500px;width:auto">
 </div>
-
-
